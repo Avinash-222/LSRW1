@@ -93,10 +93,19 @@ const SkillsLibrary = () => {
   };
 
   // 2. State Management
+  const { state: testState, setSelectedPracticeSkill } = useTest();
   const [activeTab, setActiveTab] = useState('Listening');
   const [difficultyFilter, setDifficultyFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (testState.selectedPracticeSkill) {
+      setActiveTab(testState.selectedPracticeSkill);
+      // Clear it so it doesn't force tab on manual navigation
+      setSelectedPracticeSkill(null);
+    }
+  }, [testState.selectedPracticeSkill, setSelectedPracticeSkill]);
 
   // 3. Processed Data (All items with derived state)
   const processedData = useMemo(() => {

@@ -80,7 +80,8 @@ export const TestProvider = ({ children }) => {
     isPracticing: false,
     practiceSectionId: null,
     practiceCompleted: false,
-    practiceResults: null
+    practiceResults: null,
+    selectedPracticeSkill: null
   };
 
   const [state, setState] = useState(() => {
@@ -460,6 +461,10 @@ export const TestProvider = ({ children }) => {
     setState(prev => ({ ...prev, currentTab: tab }));
   };
 
+  const setSelectedPracticeSkill = (skill) => {
+    setState(prev => ({ ...prev, selectedPracticeSkill: skill }));
+  };
+
   const loginUser = (userData) => {
     setState(prev => ({
       ...prev,
@@ -510,6 +515,7 @@ export const TestProvider = ({ children }) => {
     setHasEntered,
     currentTab: state.currentTab,
     setCurrentTab,
+    setSelectedPracticeSkill,
     testQuestions,
     isLoadingQuestions,
     currentSection: SECTIONS[state.currentSectionIndex] || null,

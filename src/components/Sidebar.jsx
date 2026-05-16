@@ -4,7 +4,6 @@ import {
   BookOpen, 
   FileCheck, 
   Bot, 
-  BarChart3, 
   User, 
   Settings,
   ShieldCheck,
@@ -25,7 +24,6 @@ const Sidebar = () => {
     { id: 'history', icon: <History size={18} />, label: 'History', path: '/history' },
     { id: 'badges', icon: <Award size={18} />, label: 'Badges', path: '/badges' },
     { id: 'certificates', icon: <Trophy size={18} />, label: 'Certificates', path: '/certificates' },
-    { id: 'analytics', icon: <BarChart3 size={18} />, label: 'Analytics', path: '/analytics' },
   ];
 
   const bottomItems = [

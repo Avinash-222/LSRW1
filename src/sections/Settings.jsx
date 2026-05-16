@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   User, Shield, Monitor, Bell, Lock, Download, HelpCircle, 
-  Save, CheckCircle2, AlertTriangle, Upload, LogOut, FileText
+  Save, CheckCircle2, AlertTriangle, Upload, LogOut, FileText, Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -52,6 +52,7 @@ const Settings = () => {
 
   const [avatar, setAvatar] = useState(null);
   const fileInputRef = React.useRef(null);
+  const dobRef = React.useRef(null);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -173,6 +174,24 @@ const Settings = () => {
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', color: 'var(--primary-900)' }}>Phone Number</label>
                   <input type="tel" className="input-field" defaultValue="+1 (555) 123-4567" />
                 </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', color: 'var(--primary-900)' }}>Date of Birth</label>
+                  <div style={{ position: 'relative' }}>
+                    <input 
+                      type="date" 
+                      ref={dobRef}
+                      className="input-field" 
+                      defaultValue="2001-05-15" 
+                      style={{ paddingRight: '40px' }}
+                    />
+                    <Calendar 
+                      size={18} 
+                      color="var(--text-muted)" 
+                      style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }} 
+                      onClick={() => dobRef.current?.showPicker()}
+                    />
+                  </div>
+                </div>
                 <div style={{ gridColumn: 'span 2' }}>
                   <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, marginBottom: '8px', color: 'var(--primary-900)' }}>Language Preference</label>
                   <select className="input-field">
@@ -222,7 +241,7 @@ const Settings = () => {
 
               <div style={{ padding: '1.5rem', border: '1px solid #fee2e2', borderRadius: '12px', background: '#fef2f2' }}>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#ef4444', marginBottom: '0.5rem' }}>Danger Zone</h3>
-                <p style={{ fontSize: '0.85rem', color: '#b91c1c', marginBottom: '1rem' }}>Deleting your account will permanently erase all test history, profile data, and analytics. This action cannot be undone.</p>
+                <p style={{ fontSize: '0.85rem', color: '#b91c1c', marginBottom: '1rem' }}>Deleting your account will permanently erase all test history and profile data. This action cannot be undone.</p>
                 {showDeleteConfirm ? (
                   <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#ef4444' }}>Are you absolutely sure?</span>
@@ -406,7 +425,7 @@ const Settings = () => {
                   <select className="input-field">
                     <option>Standard (Cards)</option>
                     <option>Compact (List View)</option>
-                    <option>Analytics Focused</option>
+
                   </select>
                 </div>
                 <div>

@@ -360,6 +360,20 @@ h1, h2, h3, h4 {
   box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
+/* Hide default browser date picker icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+input[type="date"] {
+  position: relative;
+}
+
 /* Data & Progress */
 .progress-bar {
   height: 6px;

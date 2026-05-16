@@ -12,7 +12,7 @@ import TopNav from './components/TopNav';
 import Profile from './sections/Profile';
 import History from './sections/History';
 import Dashboard from './sections/Dashboard';
-import Analytics from './sections/Analytics';
+
 import Settings from './sections/Settings';
 import SkillsLibrary from './sections/SkillsLibrary';
 import Badges from './sections/Badges';
@@ -25,8 +25,7 @@ const AssessmentContent = () => {
   
   if (currentTab === 'dashboard') {
     mainContent = <Dashboard />;
-  } else if (currentTab === 'analytics') {
-    mainContent = <Analytics />;
+
   } else if (currentTab === 'profile') {
     mainContent = <Profile />;
   } else if (currentTab === 'history') {
@@ -39,14 +38,7 @@ const AssessmentContent = () => {
     mainContent = <Badges />;
   } else if (currentTab === 'certificates') {
     mainContent = <Certificates />;
-  } else if (currentTab === 'analytics') {
-    mainContent = (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', textAlign: 'center' }}>
-        <Bot size={64} color="var(--accent)" style={{ marginBottom: '1.5rem', opacity: 0.5 }} />
-        <h2 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>Analytics Phase</h2>
-        <p style={{ color: 'var(--text-muted)', maxWidth: '400px' }}>This segment is currently undergoing structural synchronization. Full functionality will be restored in the next update.</p>
-      </div>
-    );
+
   } else if (state.completed) {
     mainContent = <Report />;
   } else if (currentTab === 'assessments') {
