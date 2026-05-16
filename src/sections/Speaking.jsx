@@ -19,6 +19,16 @@ const Speaking = ({ isPractice = false }) => {
   const [hasRecorded, setHasRecorded] = useState(false);
   const [startTime, setStartTime] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+
+  // Reset state for each new question
+  React.useEffect(() => {
+    setHasRecorded(false);
+    setStartTime(null);
+    setSubmitting(false);
+    setIsLocked(false);
+    setTranscript('');
+  }, [state.currentQuestionIndex]);
 
   const sentence = testQuestions.speaking[state.currentQuestionIndex];
 
@@ -30,6 +40,7 @@ const Speaking = ({ isPractice = false }) => {
   const handleStop = () => {
     stopRecording();
     setHasRecorded(true);
+    if (!isPractice) setIsLocked(true);
   };
 
   const handleFinish = () => {
@@ -49,11 +60,6 @@ const Speaking = ({ isPractice = false }) => {
         accuracy: accuracy,
         duration: duration,
       });
-
-      setSubmitting(false);
-      setHasRecorded(false);
-      setStartTime(null);
-      setTranscript(''); // Clear the previous transcript
     }, 1000);
   };
 
@@ -129,15 +135,15 @@ const Speaking = ({ isPractice = false }) => {
                     )}
                     <div 
                       className={`mic-btn ${isRecording ? 'active' : ''}`}
-                      onClick={isRecording ? handleStop : handleStart}
+                      onClick={isRecording ? handleStop : (isLocked ? null : handleStart)}
                       style={{ 
                         position: 'relative', 
                         width: '90px', 
                         height: '90px', 
-                        background: isInitializing ? 'var(--border)' : (isRecording ? '#ef4444' : 'var(--accent)'), 
+                        background: isInitializing || isLocked ? 'var(--border)' : (isRecording ? '#ef4444' : 'var(--accent)'), 
                         color: '#fff', 
                         zIndex: 1,
-                        cursor: isInitializing ? 'wait' : 'pointer',
+                        cursor: isInitializing || isLocked ? 'not-allowed' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
@@ -241,16 +247,29 @@ const Speaking = ({ isPractice = false }) => {
                       <CheckCircle size={20} />
                       FINALIZE ENTRY
                     </button>
-                    <button 
-                      onClick={() => setHasRecorded(false)} 
-                      style={{ 
-                        width: '100%', height: '48px', background: 'transparent', color: 'var(--text-muted)', 
-                        border: '1px solid var(--border)', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 700, 
-                        cursor: 'pointer' 
-                      }}
-                    >
-                      Discard & Reset
-                    </button>
+                    {!isPractice ? (
+                      <div style={{ marginTop: '0.5rem', textAlign: 'center', padding: '1rem', background: 'var(--bg-app)', borderRadius: '12px', border: '1px dashed var(--border)' }}>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                          <Info size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                          Assessment Mode: Single attempt captured.
+                        </p>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          setHasRecorded(false);
+                          setIsLocked(false);
+                          setTranscript('');
+                        }} 
+                        style={{ 
+                          width: '100%', height: '48px', background: 'transparent', color: 'var(--text-muted)', 
+                          border: '1px solid var(--border)', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 700, 
+                          cursor: 'pointer' 
+                        }}
+                      >
+                        Discard & Reset
+                      </button>
+                    )}
                   </div>
                 </motion.div>
               )}

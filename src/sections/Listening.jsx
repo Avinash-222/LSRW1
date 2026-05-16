@@ -20,6 +20,16 @@ const Listening = ({ isPractice = false }) => {
   const [playCount, setPlayCount] = useState(0);
   const [audioEnded, setAudioEnded] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+
+  // Reset state for each new question
+  React.useEffect(() => {
+    setPlayCount(0);
+    setAudioEnded(false);
+    setSubmitting(false);
+    setIsLocked(false);
+    setTranscript('');
+  }, [state.currentQuestionIndex]);
 
   const sentence = testQuestions.listening[state.currentQuestionIndex];
 
@@ -50,9 +60,17 @@ const Listening = ({ isPractice = false }) => {
     window.speechSynthesis.speak(utterance);
   };
 
+  const handleStopRecording = () => {
+    stopRecording();
+    if (!isPractice) setIsLocked(true);
+  };
+
   const handleFinish = () => {
+    if (submitting) return;
+    
     console.log("Listening: handleFinish triggered");
     setSubmitting(true);
+    
     try {
       stopRecording();
     } catch(e) {}
@@ -75,10 +93,7 @@ const Listening = ({ isPractice = false }) => {
         console.error("Listening evaluation error:", err);
         nextQuestion('listening', { error: "Processing failed" });
       } finally {
-        setSubmitting(false);
-        setAudioEnded(false);
-        setPlayCount(0);
-        setTranscript(''); // Clear the previous transcript
+        // State is now reset via useEffect on currentQuestionIndex change
       }
     }, 1000);
   };
@@ -113,8 +128,16 @@ const Listening = ({ isPractice = false }) => {
             <button 
               className={`mic-btn ${isPlaying ? 'active' : ''}`}
               onClick={playAudio}
-              disabled={isPlaying || playCount >= 2 || isRecording}
-              style={{ width: '100px', height: '100px', background: isPlaying ? 'var(--accent)' : 'var(--primary-900)', color: '#fff', border: 'none', borderRadius: '50%' }}
+              disabled={isPlaying || playCount >= 2 || isRecording || isLocked}
+              style={{ 
+                width: '100px', 
+                height: '100px', 
+                background: (isPlaying || playCount >= 2 || isLocked) ? '#cbd5e1' : 'var(--primary-900)', 
+                color: '#fff', 
+                border: 'none', 
+                borderRadius: '50%',
+                cursor: (isPlaying || playCount >= 2 || isLocked) ? 'not-allowed' : 'pointer'
+              }}
             >
               {isPlaying ? <Volume2 size={40} className="recording-pulse" /> : <Headphones size={40} />}
             </button>
@@ -139,12 +162,14 @@ const Listening = ({ isPractice = false }) => {
                   </div>
 
                   <button 
-                    onClick={isRecording ? stopRecording : startRecording}
-                    disabled={isInitializing || isTranscribing}
+                    onClick={isRecording ? handleStopRecording : startRecording}
+                    disabled={isInitializing || isTranscribing || isLocked}
                     style={{ 
                       width: '80px', height: '80px', borderRadius: '50%', border: 'none', 
-                      background: isRecording ? '#ef4444' : 'var(--accent)', color: '#fff',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem'
+                      background: isLocked ? '#cbd5e1' : (isRecording ? '#ef4444' : 'var(--accent)'), 
+                      color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem',
+                      cursor: (isInitializing || isTranscribing || isLocked) ? 'not-allowed' : 'pointer'
                     }}
                   >
                     {isInitializing ? <Activity className="recording-pulse" size={24} /> : (isRecording ? <Square size={24} /> : <Mic size={24} />)}
@@ -171,11 +196,11 @@ const Listening = ({ isPractice = false }) => {
 
                 <button 
                   onClick={handleFinish}
-                  disabled={isRecording || isInitializing || isTranscribing}
+                  disabled={isRecording || isInitializing || isTranscribing || submitting}
                   style={{ 
                     width: '100%', 
                     height: '56px', 
-                    background: 'var(--accent)', 
+                    background: submitting ? '#94a3b8' : 'var(--accent)', 
                     color: '#fff', 
                     border: 'none', 
                     borderRadius: '16px', 
@@ -185,9 +210,9 @@ const Listening = ({ isPractice = false }) => {
                     alignItems: 'center', 
                     justifyContent: 'center', 
                     gap: '0.75rem', 
-                    cursor: (isRecording || isInitializing || isTranscribing) ? 'not-allowed' : 'pointer',
-                    opacity: (isRecording || isInitializing || isTranscribing) ? 0.6 : 1,
-                    boxShadow: '0 8px 16px -4px rgba(37, 99, 235, 0.4)',
+                    cursor: (isRecording || isInitializing || isTranscribing || submitting) ? 'not-allowed' : 'pointer',
+                    opacity: (isRecording || isInitializing || isTranscribing || submitting) ? 0.6 : 1,
+                    boxShadow: submitting ? 'none' : '0 8px 16px -4px rgba(37, 99, 235, 0.4)',
                     transition: 'all 0.2s ease'
                   }}
                   onMouseOver={e => !e.currentTarget.disabled && (e.currentTarget.style.transform = 'translateY(-2px)')}
@@ -198,7 +223,7 @@ const Listening = ({ isPractice = false }) => {
                   ) : (
                     <CheckCircle size={20} />
                   )}
-                  {isTranscribing ? "Processing Final Audio..." : "SUBMIT RESPONSE"}
+                  {isTranscribing ? "Processing Final Audio..." : isLocked && !submitting ? "SUBMIT FINAL RESPONSE" : submitting ? "PROCESSING..." : "SUBMIT RESPONSE"}
                 </button>
                 {error && <div style={{ color: '#ef4444', fontSize: '0.75rem', textAlign: 'center' }}>{error}</div>}
               </motion.div>
