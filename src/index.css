@@ -582,5 +582,11 @@ input[type="date"] {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+
+  /* PREVENT SUGGESTIONS FROM BEING CUT OFF ON PRINT/PDF DOWNLOAD */
+  .suggestions-list-container {
+    max-height: none !important;
+    overflow: visible !important;
+  }
 }
 

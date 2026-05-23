@@ -17,50 +17,50 @@ const History = () => {
           <p style={{ color: '#64748b', fontSize: '1.05rem', marginTop: '0.25rem' }}>Review your past performance telemetry and longitudinal growth metrics.</p>
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
-           <div style={{ position: 'relative' }}>
-             <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-             <input 
-                type="text" 
-                placeholder="Search by Exam ID..." 
-                style={{ 
-                  padding: '0 1rem 0 2.75rem', 
-                  height: '46px', 
-                  width: '260px', 
-                  fontSize: '0.95rem',
-                  border: '1px solid #e2e8f0',
-                  borderRadius: '12px',
-                  background: '#fff',
-                  color: '#0f172a',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                  transition: 'all 0.2s ease',
-                  outline: 'none'
-                }} 
-                onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)'; }}
-                onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)'; }}
-             />
-           </div>
-           <button 
-             style={{ 
-               height: '46px', 
-               padding: '0 1.25rem', 
-               display: 'flex', 
-               alignItems: 'center', 
-               gap: '0.5rem', 
-               background: '#fff', 
-               border: '1px solid #e2e8f0', 
-               borderRadius: '12px', 
-               cursor: 'pointer', 
-               fontSize: '0.95rem', 
-               fontWeight: 600, 
-               color: '#475569', 
-               boxShadow: '0 2px 6px rgba(0,0,0,0.02)', 
-               transition: 'all 0.2s ease' 
-             }}
-             onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
-             onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#475569'; }}
-           >
-             <Filter size={18} /> Advanced Filters
-           </button>
+          <div style={{ position: 'relative' }}>
+            <Search size={18} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+            <input
+              type="text"
+              placeholder="Search by Exam ID..."
+              style={{
+                padding: '0 1rem 0 2.75rem',
+                height: '46px',
+                width: '260px',
+                fontSize: '0.95rem',
+                border: '1px solid #e2e8f0',
+                borderRadius: '12px',
+                background: '#fff',
+                color: '#0f172a',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+                transition: 'all 0.2s ease',
+                outline: 'none'
+              }}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; e.target.style.boxShadow = '0 0 0 3px rgba(37,99,235,0.15)'; }}
+              onBlur={(e) => { e.target.style.borderColor = '#e2e8f0'; e.target.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)'; }}
+            />
+          </div>
+          <button
+            style={{
+              height: '46px',
+              padding: '0 1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: '#fff',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              color: '#475569',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a'; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#475569'; }}
+          >
+            <Filter size={18} /> Advanced Filters
+          </button>
         </div>
       </div>
 
@@ -74,12 +74,12 @@ const History = () => {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {history.map((record, i) => (
-            <motion.div 
+            <motion.div
               key={record.studentInfo.attemptId}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="card" 
+              className="card"
               onClick={() => viewPastReport(record)}
               onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent)'}
               onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}
@@ -102,12 +102,12 @@ const History = () => {
 
               <div style={{ display: 'flex', gap: '4px' }}>
                 {['listening', 'speaking', 'reading', 'writing'].map(skill => (
-                  <div 
+                  <div
                     key={skill}
-                    style={{ 
-                      width: '32px', 
-                      height: '32px', 
-                      borderRadius: '6px', 
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '6px',
                       background: record.sectionScores[skill] >= 80 ? 'var(--success)' : record.sectionScores[skill] >= 60 ? 'var(--accent)' : 'var(--warning)',
                       color: '#fff',
                       fontSize: '0.65rem',
@@ -124,8 +124,8 @@ const History = () => {
               </div>
 
               <div style={{ textAlign: 'right' }}>
-                <span className="status-badge" style={{ 
-                  background: record.overallScore >= 80 ? 'var(--success-light)' : 'var(--accent-soft)', 
+                <span className="status-badge" style={{
+                  background: record.overallScore >= 80 ? 'var(--success-light)' : 'var(--accent-soft)',
                   color: record.overallScore >= 80 ? 'var(--success)' : 'var(--accent)',
                   fontSize: '0.65rem'
                 }}>

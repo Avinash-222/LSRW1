@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
+import { toPng } from 'html-to-image';
 
 const isBadgeUnlocked = (skill, difficulty, attemptsData) => {
   const idPrefix = skill.charAt(0);
@@ -149,9 +150,51 @@ const BadgeCard = ({ skill, difficulty, index, isUnlocked }) => {
   const isHard = difficulty === 'Hard';
   const colors = colorMap[skill][difficulty];
   const cardId = `${skill}-${difficulty}`.toLowerCase();
+  const cardRef = useRef(null);
+
+  const handleShare = async () => {
+    if (!cardRef.current || !isUnlocked) return;
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        filter: (node) => {
+          // Exclude the share button container from the generated image
+          return node.id !== `share-container-${cardId}`;
+        },
+        cacheBust: true,
+        pixelRatio: 2, // higher quality
+      });
+
+      // Try native sharing if supported
+      if (navigator.share) {
+        try {
+          const blob = await (await fetch(dataUrl)).blob();
+          const file = new File([blob], `${skill}-${difficulty}-badge.png`, { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: `${skill} - ${difficulty} Badge Unlocked!`,
+              text: `I just unlocked the ${skill} ${difficulty} badge on LSRW!`,
+              files: [file]
+            });
+            return;
+          }
+        } catch (shareErr) {
+          console.error('Error with native share', shareErr);
+        }
+      }
+
+      // Fallback: download the image
+      const link = document.createElement('a');
+      link.download = `${skill}-${difficulty}-badge.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Failed to generate image', err);
+    }
+  };
 
   return (
     <motion.div
+      ref={cardRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: isUnlocked ? 1 : 0.4, y: 0 }}
       transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -227,9 +270,10 @@ const BadgeCard = ({ skill, difficulty, index, isUnlocked }) => {
 
       <WaveBackground color1={colors.c1} color2={colors.c2} id={`grad-${cardId}`} />
 
-      <div style={{ height: '35%', width: '100%', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', zIndex: 1, paddingBottom: '24px', position: 'absolute', bottom: 0 }}>
+      <div id={`share-container-${cardId}`} style={{ height: '35%', width: '100%', display: 'flex', alignItems: 'flex-end', justifyContent: 'center', zIndex: 1, paddingBottom: '24px', position: 'absolute', bottom: 0 }}>
         <button 
           disabled={!isUnlocked}
+          onClick={handleShare}
           style={{
             background: 'transparent',
             border: '2px solid rgba(255,255,255,0.8)',
